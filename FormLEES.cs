@@ -7,6 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiveCharts;
+using LiveCharts.WinForms;
+using LiveCharts.Charts;
+using LiveCharts.Wpf;
+using LiveCharts.Configurations;
+using LiveCharts.Helpers;
+
 
 namespace csLEES
 {
@@ -15,6 +22,38 @@ namespace csLEES
         public FormLEES()
         {
             InitializeComponent();
+        }
+
+        public FormLEES(List<int> stepl, double stepsize, List<double> refindex, List<double> solution)
+        {
+            InitializeComponent();
+
+            List<string> stepmakers = new List<string>();
+
+            foreach (var step in stepl)
+            {
+                stepmakers.Add((step * stepsize).ToString());
+            }
+
+            TopPlot.Series = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Refractive indes",
+                    Values = refindex.AsChartValues()
+
+                }
+            };
+            TopPlot.AxisX.Add(new Axis
+            {
+                Title = "Thickness (nm)",
+                Labels = stepmakers
+            });
+        }
+
+        private void FormLEES_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

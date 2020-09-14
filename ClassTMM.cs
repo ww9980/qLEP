@@ -20,8 +20,8 @@ namespace csLEES
         }
         private readonly Complex32 sinTheta;
         private readonly Complex32 cosTheta;
-        public List<Layer> multilayer;
-        private Layer substrate;
+        public List<Layer> multilayer { set; get; }
+        private Layer substrate { set; get; }
         public Layer Substrate 
         {
             get { return substrate; }
@@ -63,9 +63,9 @@ namespace csLEES
 
             for (int ia = 0; ia < nlayers; ia++)
             {
-                nl.Append(multilayer[ia].Ri);
-                k.Append(2 * Pi * cwl * 
-                    nl.Last() *
+                nl.Add(multilayer[ia].Ri);
+                k.Add(2 * Pi * cwl *
+                    multilayer[ia].Ri *
                     cosTheta
                     / SOL);
                 P[0, 0] = MathNet.Numerics.Complex32.Exp(

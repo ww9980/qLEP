@@ -26,6 +26,13 @@ namespace csLEES
         double resolution = 1.0;
         double wavelength = 670.0;
 
+        List<Layer> etchedlayers = new List<Layer>();
+        List<double> Rfrindex = new List<double>();
+        int step = 0;
+        List<int> stepList = new List<int>();
+        List<double> solutionList = new List<double>();
+
+
         private void MainForm_Load(object sender, EventArgs e)
         {
 
@@ -176,7 +183,17 @@ namespace csLEES
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            /*
+            if (layerstack.Count <= 1)
+            { 
+                MessageBox.Show("The bottom layer is considered the substrate. " +
+                        "There needs to be at least 1 layer other than the substrate to compute. " +
+                        "\nModify the model and try again. ",
+                      "Error",
+                       MessageBoxButtons.OK,
+                       MessageBoxIcon.Exclamation,
+                       MessageBoxDefaultButton.Button1);
+                return;
+            }
             for (int ilayer = 0; ilayer < layerstack.Count; ilayer++)
             {
                 if (layerstack[ilayer].Thickness <= resolution)
@@ -191,19 +208,30 @@ namespace csLEES
                     return;
                 }
             }
-            */
-                freeze_all(this, false);
+            bgWorkerRun.RunWorkerAsync();
+            freeze_all(this, false);
         }
 
         private void bgWorkerRun_DoWork(object sender, DoWorkEventArgs e)
         {
             Layer substrate = layerstack.Last();
-            layerstack.RemoveAt(-1);
-            double etchedthickness = 0.0;
+            layerstack.RemoveAt(layerstack.Count - 1);
             for (int ilayer = 0; ilayer < layerstack.Count; ilayer++)
             {
-                bgWorkerRun.ReportProgress(ilayer / layerstack.Count);
-                
+                var currentlayer = layerstack[ilayer];
+                //bgWorkerRun.ReportProgress(ilayer / layerstack.Count);
+                while (currentlayer.Thickness > resolution)
+                {
+                    currentlayer.Thickness -= resolution;
+                    etchedlayers.Add(currentlayer);
+                    Rfrindex.Add(currentlayer.Ri.Real);
+                    stepList.Add(step);
+                    step++;
+                    var TMM = new ClassTMM(layerstack,0);
+                    TMM.Substrate = substrate;
+                    TMM.Solve(wavelength);
+                    solutionList.Add(TMM.Rs);
+                }
             }
         }
 
@@ -220,6 +248,13 @@ namespace csLEES
         private void numWavelength_ValueChanged(object sender, EventArgs e)
         {
             wavelength = (double)numWavelength.Value;
+        }
+
+        private void bgWorkerRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var frmresult = new FormLEES(stepList, resolution, Rfrindex, solutionList);
+            frmresult.ShowDialog();
+            freeze_all(this, true);
         }
     }
 }
