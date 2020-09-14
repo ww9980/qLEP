@@ -1,2 +1,2 @@
-# qLEP
-Qt based laser endpoint detection
+# csLEP
+cs based laser endpoint detection
