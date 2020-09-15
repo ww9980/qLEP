@@ -81,20 +81,20 @@ namespace csLEES
 
                 Ds[1, 0] = nl.Last() * cosTheta;
                 Ds[1, 1] = -Ds[1, 0];
-                _ = Ms.Multiply(Ds).Multiply(P).Multiply(Ds.Inverse());
+                Ms = P.Multiply(Ds.Inverse()).Multiply(Ds).Multiply(Ms);
                 
                 Dp[1, 0] = nl.Last();
                 Dp[1, 1] = -Dp[1, 0];
-                _ = Mp.Multiply(Dp).Multiply(P).Multiply(Dp.Inverse());
+                Mp = P.Multiply(Dp.Inverse()).Multiply(Dp).Multiply(Mp);
             }
             Ds[1, 0] = substrate.Ri * cosTheta;
             Ds[1, 1] = -Ds[1, 0];
-            _ = Ms.Multiply(Ds);
+            Ms = Ms.Multiply(Ds);
 
 
             Dp[1, 0] = substrate.Ri;
             Dp[1, 1] = -Dp[1, 0];
-            _ = Mp.Multiply(Dp);
+            Mp = Mp.Multiply(Dp);
 
             Rs = (Ms[1, 0] / Ms[0, 0]).Norm();
             Rs *= Rs;

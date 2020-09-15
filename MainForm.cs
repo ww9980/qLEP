@@ -214,11 +214,20 @@ namespace csLEES
 
         private void bgWorkerRun_DoWork(object sender, DoWorkEventArgs e)
         {
-            Layer substrate = layerstack.Last();
-            layerstack.RemoveAt(layerstack.Count - 1);
-            for (int ilayer = 0; ilayer < layerstack.Count; ilayer++)
+            // 把Layerstack改为深度拷贝否则扰乱第二次编辑和运行
+            // 将layerstack逆序以符合 前面是top 后面是substrate 的计算规则
+            var localLayerStack = new List<Layer>();
+            foreach (var item in layerstack)
             {
-                var currentlayer = layerstack[ilayer];
+                localLayerStack.Add(item);
+            }
+            localLayerStack.Reverse();
+
+            Layer substrate = localLayerStack.Last();
+            localLayerStack.RemoveAt(localLayerStack.Count - 1);
+            for (int ilayer = 0; ilayer < localLayerStack.Count; ilayer++)
+            {
+                var currentlayer = localLayerStack[ilayer];
                 //bgWorkerRun.ReportProgress(ilayer / layerstack.Count);
                 while (currentlayer.Thickness > resolution)
                 {
@@ -227,7 +236,7 @@ namespace csLEES
                     Rfrindex.Add(currentlayer.Ri.Real);
                     stepList.Add(step);
                     step++;
-                    var TMM = new ClassTMM(layerstack,0);
+                    var TMM = new ClassTMM(localLayerStack, 0);
                     TMM.Substrate = substrate;
                     TMM.Solve(wavelength);
                     solutionList.Add(TMM.Rs);

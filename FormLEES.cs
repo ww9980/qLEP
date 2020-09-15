@@ -46,7 +46,21 @@ namespace csLEES
             };
             TopPlot.AxisX.Add(new Axis
             {
-                Title = "Thickness (nm)",
+                Title = "Etch depth (nm) excluding substrate",
+                Labels = stepmakers
+            });
+            BottomPlot.Series = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "LEP intensity",
+                    Values = solution.AsChartValues()
+
+                }
+            };
+            BottomPlot.AxisX.Add(new Axis
+            {
+                Title = "Etch depth (nm) excluding substrate",
                 Labels = stepmakers
             });
         }
