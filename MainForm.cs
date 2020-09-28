@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using LiveCharts;
@@ -221,10 +217,11 @@ namespace csLEES
             {
                 localLayerStack.Add(item);
             }
+            // 加上一个空气层在尾部，反转后为顶部即第0层
+            localLayerStack.Add(new Layer("Air", 1000, 1));
             localLayerStack.Reverse();
 
             Layer substrate = localLayerStack.Last();
-            localLayerStack.RemoveAt(localLayerStack.Count - 1);
             for (int ilayer = 0; ilayer < localLayerStack.Count; ilayer++)
             {
                 var currentlayer = localLayerStack[ilayer];
@@ -236,7 +233,7 @@ namespace csLEES
                     Rfrindex.Add(currentlayer.Ri.Real);
                     stepList.Add(step);
                     step++;
-                    var TMM = new ClassTMM(localLayerStack, 0);
+                    var TMM = new ClassTMM(etchedlayers, 0);
                     TMM.SolveSingleWl(wavelength);
                     solutionList.Add(TMM.Rs[wavelength]);
                 }

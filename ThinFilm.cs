@@ -4,9 +4,12 @@ namespace csLEES
 {
     class Layer
     {
-        public Layer() 
+        public Layer() { }
+        public Layer(string name, double tk, Complex n)
         {
-
+            Name = name;
+            Thickness = tk;
+            Ri = n;
         }
 
         public string Name { get; set; }

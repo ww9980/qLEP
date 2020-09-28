@@ -29,11 +29,10 @@ namespace csLEES
             cosTheta = new Complex((float)Trig.Cos(angle_inc), 0);
         }
 
-        public List<Complex32> n; // 波长，复折射率
-        public Dictionary<double, double> Rs { set; get; }
-        public Dictionary<double, double> Ts { set; get; }
-        public Dictionary<double, double> Rp { set; get; }
-        public Dictionary<double, double> Tp { set; get; }
+        public Dictionary<double, double> Rs = new Dictionary<double, double>();
+        public Dictionary<double, double> Ts = new Dictionary<double, double>();
+        public Dictionary<double, double> Rp = new Dictionary<double, double>();
+        public Dictionary<double, double> Tp = new Dictionary<double, double>();
 
         /// <summary>
         /// Snell calculates the incident angle at every interface throughout a multilayer stack. 
@@ -84,7 +83,7 @@ namespace csLEES
 
             List<Complex> k = new List<Complex>();
 
-            for (int i = 1; i <= nlayers; i++)
+            for (int i = 0; i < nlayers; i++)
             {
                 k.Add(2 * cPi * multilayer[i].Ri / cwl * Trig.Cos(thetabylayer[i]) );
             }
@@ -148,7 +147,7 @@ namespace csLEES
             Ts.Add(wl, (trS * trS).Magnitude);
             var trP = 1.0 / (Mp[0, 0]);
             trP = (multilayer.Last().Ri * Trig.Cos(thetabylayer.Last()) / multilayer[0].Ri * cosTheta) * trP.Magnitude;
-            Ts.Add(wl, (trP * trP).Magnitude);
+            Tp.Add(wl, (trP * trP).Magnitude);
 
             return;
         }
