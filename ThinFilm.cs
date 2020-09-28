@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace csLEES
 {
@@ -15,9 +11,10 @@ namespace csLEES
 
         public string Name { get; set; }
         public double Thickness { get; set; }
-        public MathNet.Numerics.Complex32 Ri { get; set; }
+        public Complex Ri { get; set; }
+        public bool Isotropic { get; set; } = false;
 
-        public int IsSubstrate { set; get; }
+        //public int IsSubstrate { set; get; }
         // 1 - substrate
         // 0 - normal layer in stack
     }

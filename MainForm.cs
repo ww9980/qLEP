@@ -237,9 +237,8 @@ namespace csLEES
                     stepList.Add(step);
                     step++;
                     var TMM = new ClassTMM(localLayerStack, 0);
-                    TMM.Substrate = substrate;
-                    TMM.Solve(wavelength);
-                    solutionList.Add(TMM.Rs);
+                    TMM.SolveSingleWl(wavelength);
+                    solutionList.Add(TMM.Rs[wavelength]);
                 }
             }
         }

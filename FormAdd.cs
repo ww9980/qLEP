@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,7 +45,7 @@ namespace csLEES
             float.TryParse(tN.Text, out n);
             float.TryParse(tK.Text, out k);
 
-            AddedLayer.Ri = new MathNet.Numerics.Complex32(n, k);
+            AddedLayer.Ri = new Complex(n, k);
             Close();
         }
 
