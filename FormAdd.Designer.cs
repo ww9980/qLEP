@@ -58,7 +58,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 144);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(233, 27);
             this.flowLayoutPanel1.TabIndex = 1;
@@ -66,10 +66,10 @@
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(175, 2);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(56, 19);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -77,10 +77,10 @@
             // btnOK
             // 
             this.btnOK.Location = new System.Drawing.Point(115, 2);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(2);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(56, 19);
-            this.btnOK.TabIndex = 0;
+            this.btnOK.TabIndex = 4;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -93,7 +93,7 @@
             this.tableLayoutPanel2.Controls.Add(this.groupBox1, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -106,9 +106,9 @@
             this.groupBox1.Controls.Add(this.tableLayoutPanel1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(2, 2);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(233, 138);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
@@ -129,7 +129,7 @@
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(2, 15);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -141,10 +141,10 @@
             // tMatName
             // 
             this.tMatName.Location = new System.Drawing.Point(78, 2);
-            this.tMatName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tMatName.Margin = new System.Windows.Forms.Padding(2);
             this.tMatName.Name = "tMatName";
             this.tMatName.Size = new System.Drawing.Size(76, 20);
-            this.tMatName.TabIndex = 6;
+            this.tMatName.TabIndex = 0;
             // 
             // label1
             // 
@@ -169,7 +169,7 @@
             // tThickness
             // 
             this.tThickness.Location = new System.Drawing.Point(78, 87);
-            this.tThickness.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tThickness.Margin = new System.Windows.Forms.Padding(2);
             this.tThickness.Name = "tThickness";
             this.tThickness.Size = new System.Drawing.Size(76, 20);
             this.tThickness.TabIndex = 3;
@@ -201,7 +201,7 @@
             this.flowLayoutPanel2.Controls.Add(this.tK);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(78, 26);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(123, 57);
             this.flowLayoutPanel2.TabIndex = 7;
@@ -209,10 +209,10 @@
             // tN
             // 
             this.tN.Location = new System.Drawing.Point(2, 2);
-            this.tN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tN.Margin = new System.Windows.Forms.Padding(2);
             this.tN.Name = "tN";
             this.tN.Size = new System.Drawing.Size(76, 20);
-            this.tN.TabIndex = 8;
+            this.tN.TabIndex = 1;
             // 
             // label5
             // 
@@ -227,10 +227,10 @@
             // tK
             // 
             this.tK.Location = new System.Drawing.Point(2, 26);
-            this.tK.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tK.Margin = new System.Windows.Forms.Padding(2);
             this.tK.Name = "tK";
             this.tK.Size = new System.Drawing.Size(76, 20);
-            this.tK.TabIndex = 9;
+            this.tK.TabIndex = 2;
             // 
             // FormAdd
             // 
@@ -239,7 +239,7 @@
             this.ClientSize = new System.Drawing.Size(237, 173);
             this.Controls.Add(this.tableLayoutPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FormAdd";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormAdd";
