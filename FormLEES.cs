@@ -24,7 +24,7 @@ namespace csLEES
             InitializeComponent();
         }
 
-        public FormLEES(List<int> stepl, double stepsize, List<double> refindex, List<double> solution)
+        public FormLEES(List<double> stepl, double stepsize, List<double> refindex, List<double> solution)
         {
             InitializeComponent();
 

@@ -16,6 +16,18 @@ namespace csLEES
         private readonly Complex sinTheta;
         private readonly Complex cosTheta;
         public double theta_inc = 0;
+
+        /*
+         仿真过程矩阵 
+         
+         底                                      自由空间入射
+        | T |   |        | |        | |     |   | 1 |
+        |   | = | Bottom | | Matrix | | Top | = |   |
+        | 0 |   |        | |        | |     |   | R |
+        
+         */ 
+
+
         /// <summary>
         /// 规定 0 系 自由空间 即入射光源所在空间
         /// last 系 substrate
@@ -29,12 +41,12 @@ namespace csLEES
             cosTheta = new Complex((float)Trig.Cos(angle_inc), 0);
         }
 
-        public Dictionary<double, double> Rs = new Dictionary<double, double>();
-        public Dictionary<double, double> Ts = new Dictionary<double, double>();
-        public Dictionary<double, double> Rp = new Dictionary<double, double>();
-        public Dictionary<double, double> Tp = new Dictionary<double, double>();
-        public Dictionary<double, double> Ephi = new Dictionary<double, double>();
-        public Dictionary<double, double> Edelta = new Dictionary<double, double>();
+        public double Rs = new double();
+        public double Ts = new double();
+        public double Rp = new double();
+        public double Tp = new double();
+        public double Ephi = new double();
+        public double Edelta = new double();
 
         /// <summary>
         /// Snell calculates the incident angle at every interface throughout a multilayer stack. 
@@ -122,51 +134,53 @@ namespace csLEES
                 k.Add(2 * cPi * multilayer[i].Ri / cwl * Trig.Cos(thetabylayer[i]) );
             }
 
-            Ds = DsBuilder(multilayer[0].Ri, cosTheta);
+            for (int i = 1; i < nlayers; i++) { 
 
-            Ms = Ds.Inverse();
+                Ds = DsBuilder(multilayer[0].Ri, cosTheta);
 
-            Dp = DpBuilder(multilayer[0].Ri, cosTheta);
+                Ms = Ds.Inverse();
 
-            Mp = Dp.Inverse();
+                Dp = DpBuilder(multilayer[0].Ri, cosTheta);
 
-            for (int ia = 1; ia < nlayers; ia++)
-            {
-                Ds = DsBuilder(multilayer[ia].Ri, Trig.Cos(thetabylayer[ia]));
-                Dp = DpBuilder(multilayer[ia].Ri, Trig.Cos(thetabylayer[ia]));
+                Mp = Dp.Inverse();
 
-                var phi = k[ia] * multilayer[ia].Thickness;
+                for (int ia = 1; ia < nlayers - 1 ; ia++)
+                {
+                    Ds = DsBuilder(multilayer[ia].Ri, Trig.Cos(thetabylayer[ia]));
+                    Dp = DpBuilder(multilayer[ia].Ri, Trig.Cos(thetabylayer[ia]));
 
-                P[0, 0] = Complex.Exp(ij * phi);
-                P[0, 1] = 0;
-                P[1, 0] = 0;
-                P[1, 1] = Complex.Exp(-ij * phi);
+                    var phi = k[ia] * multilayer[ia].Thickness;
 
-                Ms = Ms * Ds * P * Ds.Inverse();
-                Mp = Mp * Dp * P * Dp.Inverse();
+                    P[0, 0] = Complex.Exp(ij * phi);
+                    P[0, 1] = 0;
+                    P[1, 0] = 0;
+                    P[1, 1] = Complex.Exp(-ij * phi);
+
+                    Ms = Ms * Ds * P * Ds.Inverse();
+                    Mp = Mp * Dp * P * Dp.Inverse();
+                }
+
+                Ds = DsBuilder(multilayer[nlayers - 1].Ri, Trig.Cos(thetabylayer[nlayers - 1]));
+                Ms = Ms * Ds;
+
+                Dp = DpBuilder(multilayer[nlayers - 1].Ri, Trig.Cos(thetabylayer[nlayers - 1]));
+                Mp = Mp * Dp;
+
+                var refS = (Ms[1, 0] / Ms[0, 0]);
+                Rs=( Complex.Abs(refS) * Complex.Abs(refS));
+                var refp = (Mp[1, 0] / Mp[0, 0]);
+                Rp=( Complex.Abs(refp) * Complex.Abs(refp));
+
+                var trS = 1.0 / (Ms[0, 0]);
+                //trS = (multilayer.Last().Ri * Trig.Cos(thetabylayer.Last()) / multilayer[0].Ri * cosTheta) * trS.Magnitude;
+                Ts=( Complex.Abs(trS) * Complex.Abs(trS));
+                var trP = 1.0 / (Mp[0, 0]);
+                //trP = (multilayer.Last().Ri * Trig.Cos(thetabylayer.Last()) / multilayer[0].Ri * cosTheta) * trP.Magnitude;
+                Tp=( Complex.Abs(trP) * Complex.Abs(trP));
+
+                Ephi=( Trig.Atan(Complex.Abs(refp / refS)));
+                Edelta=( (-refp / refS).Phase);
             }
-
-            Ds = DsBuilder(multilayer[nlayers].Ri, Trig.Cos(thetabylayer[nlayers]));
-            Ms *= Ds;
-
-            Dp = DpBuilder(multilayer[nlayers].Ri, Trig.Cos(thetabylayer[nlayers]));
-            Mp *= Dp;
-
-            var refS = (Ms[1, 0] / Ms[0, 0]);
-            Rs.Add( wl, Complex.Abs(refS) * Complex.Abs(refS));
-            var refp = (Mp[1, 0] / Mp[0, 0]);
-            Rp.Add( wl, Complex.Abs(refp) * Complex.Abs(refp));
-
-            var trS = 1.0 / (Ms[0, 0]);
-            //trS = (multilayer.Last().Ri * Trig.Cos(thetabylayer.Last()) / multilayer[0].Ri * cosTheta) * trS.Magnitude;
-            Ts.Add(wl, Complex.Abs(trS) * Complex.Abs(trS));
-            var trP = 1.0 / (Mp[0, 0]);
-            //trP = (multilayer.Last().Ri * Trig.Cos(thetabylayer.Last()) / multilayer[0].Ri * cosTheta) * trP.Magnitude;
-            Tp.Add(wl, Complex.Abs(trP) * Complex.Abs(trP));
-
-            Ephi.Add(wl, Trig.Atan(Complex.Abs(refp / refS)));
-            Edelta.Add(wl, (-refp/refS).Phase);
-
             return;
         }
     }

@@ -37,9 +37,7 @@ namespace csLEES
             }
             AddedLayer = new Layer();
             AddedLayer.Name = tMatName.Text;
-            double th;
-            double.TryParse(tThickness.Text, out th);
-
+             _ = double.TryParse(tThickness.Text, out double th);
             AddedLayer.Thickness = th;
             float n, k;
             float.TryParse(tN.Text, out n);

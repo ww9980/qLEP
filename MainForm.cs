@@ -18,15 +18,14 @@ namespace csLEES
 
         List<Layer> layerstack = new List<Layer>();
         List<ListViewItem> LVI = new List<ListViewItem>();
+        List<double> EtchSteps = new List<double>();
+        List<double> Rlaser = new List<double>();
+        List<double> refrIdx = new List<double>();
+        List<ClassTMM> solutionList = new List<ClassTMM>();
 
         double resolution = 1.0;
         double wavelength = 670.0;
 
-        List<Layer> etchedlayers = new List<Layer>();
-        List<double> Rfrindex = new List<double>();
-        int step = 0;
-        List<int> stepList = new List<int>();
-        List<double> solutionList = new List<double>();
 
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -208,36 +207,114 @@ namespace csLEES
             freeze_all(this, false);
         }
 
+        private int count_noninf(List<Layer> lLayer)
+        {
+            int rtnc = 0;
+            foreach(var layer in lLayer)
+            {
+                if (layer.Thickness != double.PositiveInfinity)
+                {
+                    rtnc++;
+                }
+            }
+            return rtnc;
+        }
+
         private void bgWorkerRun_DoWork(object sender, DoWorkEventArgs e)
         {
             // 把Layerstack改为深度拷贝否则扰乱第二次编辑和运行
-            // 将layerstack逆序以符合 前面是top 后面是substrate 的计算规则
+            // 将layerstack逆序以符合 前面是 top 后面是 substrate 的计算规则
             var localLayerStack = new List<Layer>();
             foreach (var item in layerstack)
             {
                 localLayerStack.Add(item);
             }
-            // 加上一个空气层在尾部，反转后为顶部即第0层
-            localLayerStack.Add(new Layer("Air", 1000, 1));
-            localLayerStack.Reverse();
 
-            Layer substrate = localLayerStack.Last();
-            for (int ilayer = 0; ilayer < localLayerStack.Count; ilayer++)
+            // List<Layer> lls = layerstack.ConvertAll( l => l);
+            // 加上一个空气层在尾部，反转后为顶部即第0层
+            localLayerStack.Add(new Layer("Air", double.PositiveInfinity, 1));
+            localLayerStack.Reverse();
+            // 将substrate层设为 正无穷
+            localLayerStack.Last().Thickness = double.PositiveInfinity;
+
+            var idxtemp = 0;
+            var indexno = 0;
+
+            var iloop = -1;
+            var etchStepCurrent = resolution;
+
+            List<List<Layer>> etchedlayers = new List<List<Layer>>();
+
+            while (count_noninf(localLayerStack) > 0)
             {
-                var currentlayer = localLayerStack[ilayer];
-                //bgWorkerRun.ReportProgress(ilayer / layerstack.Count);
-                while (currentlayer.Thickness > resolution)
+                iloop++;
+                if (iloop <= 0)
                 {
-                    currentlayer.Thickness -= resolution;
-                    etchedlayers.Add(currentlayer);
-                    Rfrindex.Add(currentlayer.Ri.Real);
-                    stepList.Add(step);
-                    step++;
-                    var TMM = new ClassTMM(etchedlayers, 0);
+                    // 初loop，不用做啥
+                    etchStepCurrent = 0;
+                    indexno = idxtemp;
+                }
+                else
+                {
+                    while (localLayerStack[idxtemp].Thickness == double.PositiveInfinity)
+                    {
+                        idxtemp++;
+                    }
+                    indexno = idxtemp;
+                }
+
+                if (localLayerStack[indexno].Thickness <= etchStepCurrent)
+                {
+                    etchStepCurrent -= localLayerStack[indexno].Thickness;
+                    localLayerStack.RemoveAt(indexno);
+                }
+                else if (localLayerStack[indexno].Thickness > etchStepCurrent)
+                {
+                    localLayerStack[indexno].Thickness -= etchStepCurrent;
+                    var deepcopy = new List<Layer>();
+                    localLayerStack.ForEach(delegate (Layer alayer)
+                    {
+                       deepcopy.Add((Layer)alayer.Clone());
+                    });
+                    etchedlayers.Add(deepcopy);
+                    refrIdx.Add(etchedlayers.Last()[idxtemp].Ri.Real);
+                    if (iloop <= 0)
+                    {
+                        EtchSteps.Add(0.0);
+                    }
+                    else
+                    {
+                        EtchSteps.Add(EtchSteps.Last() + resolution);
+                        etchStepCurrent = resolution;
+                    }
+                    var TMM = new ClassTMM(etchedlayers.Last(), 0);
                     TMM.SolveSingleWl(wavelength);
-                    solutionList.Add(TMM.Rs[wavelength]);
+                    solutionList.Add(TMM);
+                    Rlaser.Add(TMM.Rs);
                 }
             }
+
+            /*
+            for (int ilayer = 0; ilayer < localLayerStack.Count; ilayer++)
+            {
+                if (ilayer <= 0) 
+                { indexno = idxtemp; }
+                else { 
+                    var currentlayer = localLayerStack[ilayer];
+                    //bgWorkerRun.ReportProgress(ilayer / layerstack.Count);
+                    while (currentlayer.Thickness > resolution)
+                    {
+                        currentlayer.Thickness -= resolution;
+                        etchedlayers.Add(currentlayer);
+                        Rfrindex.Add(currentlayer.Ri.Real);
+                        stepList.Add(step);
+                        step++;
+                        var TMM = new ClassTMM(etchedlayers, 0);
+                        TMM.SolveSingleWl(wavelength);
+                        solutionList.Add(TMM.Rs[wavelength]);
+                    }
+                }
+            }*/
         }
 
         private void bgWorkerRun_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -257,7 +334,7 @@ namespace csLEES
 
         private void bgWorkerRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            var frmresult = new FormLEES(stepList, resolution, Rfrindex, solutionList);
+            var frmresult = new FormLEES(EtchSteps, resolution, refrIdx, Rlaser);
             frmresult.ShowDialog();
             freeze_all(this, true);
         }
